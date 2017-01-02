@@ -1,0 +1,10 @@
+name = SQLite Database Driver
+description = Enable the use of SQLite databases
+
+database_driver = sqlite
+
+database_backend[DatabaseConnection_sqlite] = database.inc
+database_backend[DatabaseTasks_sqlite] = install.inc
+database_backend[InsertQuery_sqlite] = query.inc
+database_backend[TruncateQuery_sqlite] = query.inc
+database_backend[DatabaseSchema_sqlite] = schema.inc

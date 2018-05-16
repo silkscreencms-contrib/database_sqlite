@@ -144,6 +144,18 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
   }
 
   /**
+   * Gets all the attached databases.
+   *
+   * @return array
+   *   An array of attached database names.
+   *
+   * @see DatabaseConnection_sqlite::__construct().
+   */
+  public function getAttachedDatabases() {
+    return $this->attachedDatabases;
+  }
+
+  /**
    * SQLite compatibility implementation for the IF() SQL function.
    */
   public function sqlFunctionIf($condition, $expr1, $expr2 = NULL) {

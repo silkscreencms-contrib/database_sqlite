@@ -106,6 +106,7 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
     $this->sqliteCreateFunction('substring', array($this, 'sqlFunctionSubstring'), 3);
     $this->sqliteCreateFunction('substring_index', array($this, 'sqlFunctionSubstringIndex'), 3);
     $this->sqliteCreateFunction('rand', array($this, 'sqlFunctionRand'));
+    $this->sqliteCreateFunction('regexp', array($this, 'sqlFunctionRegexp'));
 
     // SQLite does not support the LIKE BINARY operator, so we overload the
     // non-standard GLOB operator for case-sensitive matching. Another option
@@ -227,6 +228,15 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
       mt_srand($seed);
     }
     return mt_rand() / mt_getrandmax();
+  }
+
+  /**
+   * SQLite compatibility implementation for the REGEXP SQL operator.
+   *
+   * The REGEXP operator is a special syntax for the regexp() user function.
+   */
+  public static function sqlFunctionRegexp($string, $pattern) {
+    return preg_match('#' . str_replace('#', '\#', $pattern) . '#i', $string);
   }
 
    /**

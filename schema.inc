@@ -46,6 +46,19 @@ class DatabaseSchema_sqlite extends DatabaseSchema {
     return array_merge($sql, $this->createIndexSql($name, $table));
   }
 
+  protected function cloneTableSql($source, $target) {
+    $sql = $this->connection->db_query("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = :source", array(':source' => $source))->fetchField();
+    $statements[] = str_replace($source, $target, $sql);
+
+    $indexes_sql = $this->connection->db_query("SELECT name,sql FROM sqlite_master WHERE type = 'index' AND tbl_name = :source AND sql IS NOT NULL;", array(':source' => $source))->fetchAllAssoc('name', PDO::FETCH_ASSOC);
+    foreach ($indexes_sql as $index => $index_sql) {
+      $statements[] = str_replace($source, $target, $index_sql);
+    }
+    $statements[] = 'INSERT INTO ' . $target . ' SELECT * FROM ' . $source;
+
+    return $statements;
+  }
+
   /**
    * Build the SQL expression for indexes.
    */

@@ -314,6 +314,18 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
     return 'sqlite';
   }
 
+  /**
+   * Overrides DatabaseConnection::createDatabase().
+   *
+   * @param string $database
+   *   The name of the database to create.databaseType
+   *
+   * @throws DatabaseNotFoundException
+   */
+  public function createDatabase($database) {
+    throw new DatabaseOperationNotSupported('Unsupported operation.');
+  }
+
   public function mapConditionOperator($operator) {
     // We don't want to override any of the defaults.
     static $specials = array(

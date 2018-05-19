@@ -108,6 +108,7 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
     $this->sqliteCreateFunction('length', 'strlen', 1);
     $this->sqliteCreateFunction('md5', 'md5', 1);
     $this->sqliteCreateFunction('concat', array($this, 'sqlFunctionConcat'));
+    $this->sqliteCreateFunction('concat_ws', array($this, 'sqlFunctionConcatWs'));
     $this->sqliteCreateFunction('substring', array($this, 'sqlFunctionSubstring'), 3);
     $this->sqliteCreateFunction('substring_index', array($this, 'sqlFunctionSubstringIndex'), 3);
     $this->sqliteCreateFunction('rand', array($this, 'sqlFunctionRand'));
@@ -198,6 +199,25 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
   public function sqlFunctionConcat() {
     $args = func_get_args();
     return implode('', $args);
+  }
+
+  /**
+   * SQLite compatibility implementation for the CONCAT_WS() SQL function.
+   *
+   * @see http://dev.mysql.com/doc/refman/5.6/en/string-functions.html#function_concat-ws
+   */
+  public static function sqlFunctionConcatWs() {
+    $args = func_get_args();
+    $separator = array_shift($args);
+    // If the separator is NULL, the result is NULL.
+    if ($separator === FALSE || is_null($separator)) {
+      return NULL;
+    }
+    // Skip any NULL values after the separator argument.
+    $args = array_filter($args, function ($value) {
+      return !is_null($value);
+    });
+    return implode($separator, $args);
   }
 
   /**

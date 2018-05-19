@@ -43,6 +43,11 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
   protected $attachedDatabases = array();
 
   /**
+   * Local timezone
+   */
+  protected $local_tz = 'utc';
+
+  /**
    * Whether or not a table has been dropped this request: the destructor will
    * only try to get rid of unnecessary databases if there is potential of them
    * being empty.
@@ -450,6 +455,148 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
 
   public function utf8mb4IsSupported() {
     return TRUE;
+  }
+
+  /**
+   * Set the session timezone by offset.
+   */
+  public function setSessionTimezoneOffset($offset) {
+    if (!in_array($offset, array('utc', 'UTC')) && (!preg_match('/[+-]?\d\d(:\d\d)?/', $offset))) {
+      return FALSE;
+    }
+    $this->local_tz = $offset;
+  }
+
+  public function hasTimezoneSupport() {
+    return TRUE;
+  }
+
+  public function dateFieldSql($field, $field_type = DATE_UNIX) {
+    $local_tz = $this->local_tz;
+    switch ($field_type) {
+      case DATE_UNIX:
+        $field = "datetime($field, 'unixepoch', '$local_tz')";
+        break;
+
+      case DATE_ISO:
+      case DATE_DATETIME:
+        $field = "datetime($field, '$local_tz')";
+        break;
+    }
+
+    return $field;
+  }
+
+//  abstract public function dateOffsetSql($field, $offset);
+
+  public function dateMathSql($field, $direction, $count, $granularity) {
+    $granularity .= 'S';
+    switch ($direction) {
+      case 'ADD':
+        return "datetime($field, '+$count $granularity')";
+
+      case 'SUB':
+        return "datetime($field, '-$count $granularity')";
+    }
+    return $field;
+  }
+
+  public function dateConvertTimezoneSql($field, $source, $target) {
+    throw new DatabaseOperationNotSupported('Database does not convert timezones.');
+  }
+
+  /**
+   * Format a date field.
+   *
+   * @param string $format
+   *   A format string for the result, like 'Y-m-d H:i:s' .
+   * @param string $field
+   *   The real table and field name, like 'tablename.fieldname' .
+   *
+   * @return string
+   *   An appropriate SQL string for the db type and field type.
+   */
+  public function dateFormatSql($field, $format) {
+    $replace = array(
+      // 4 digit year number.
+      'Y' => '%Y',
+      // No format for 2 digit year number.
+      'y' => '%Y',
+      // No format for 3 letter month name.
+      'M' => '%m',
+      // Month number with leading zeros.
+      'm' => '%m',
+      // No format for month number without leading zeros.
+      'n' => '%m',
+      // No format for full month name.
+      'F' => '%m',
+      // No format for 3 letter day name.
+      'D' => '%d',
+      // Day of month number with leading zeros.
+      'd' => '%d',
+      // No format for full day name.
+      'l' => '%d',
+      // No format for day of month number without leading zeros.
+      'j' => '%d',
+      // ISO week number.
+      'W' => '%W',
+      // 24 hour hour with leading zeros.
+      'H' => '%H',
+      // No format for 12 hour hour with leading zeros.
+      'h' => '%H',
+      // Minutes with leading zeros.
+      'i' => '%M',
+      // Seconds with leading zeros.
+      's' => '%S',
+      // No format for AM/PM.
+      'A' => '',
+      // Week number.
+      '\WW' => '',
+    );
+    $format = strtr($format, $replace);
+    return "strftime('$format', $field)";
+  }
+
+  /**
+   * Extract part of a date from a date field.
+   *
+   * @param string $extract_type
+   *   The type of value to extract from the date, like 'MONTH'.
+   * @param string $field
+   *   The real table and field name, like 'tablename.fieldname'.
+   *
+   * @return string
+   *   An appropriate SQL string for the db type and field type.
+   */
+  public function dateExtractSql($field, $extract_type) {
+//    throw new DatabaseOperationNotSupported('dateExtractSql not yet implemented.');
+    switch (strtoupper($extract_type)) {
+      case 'DATE':
+        return $field;
+      case 'YEAR':
+        return "strftime('%Y', datetime($field, 'unixepoch'))";
+      case 'MONTH':
+        return "strftime('%m', datetime($field, 'unixepoch'))";
+      case 'DAY':
+        return "strftime('%d', datetime($field, 'unixepoch'))";
+      case 'HOUR':
+        return "strftime('%H', datetime($field, 'unixepoch')')";
+      case 'MINUTE':
+        return "strftime('%M', datetime($field, 'unixepoch'))";
+      case 'SECOND':
+        return "strftime('%S', datetime($field, 'unixepoch'))";
+
+      // ISO week number for date.
+      case 'WEEK':
+        return "strftime('%W', datetime($field, 'unixepoch'))";
+      case 'DOW':
+        return "cast(strftime('%w', $field) as INTEGER)";
+      case 'DOY':
+        return "julianday(datetime($field, 'startofday'))";
+    }
+
+    // An unknown function.
+    return FALSE;
   }
 
 }

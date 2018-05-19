@@ -239,6 +239,11 @@ class DatabaseSchema_sqlite extends DatabaseSchema {
 
       'blob:big'        => 'BLOB',
       'blob:normal'     => 'BLOB',
+
+      // Store all dates and times as text
+      'date:normal'     => 'VARCHAR',
+      'datetime:normal' => 'VARCHAR',
+      'time:normal'     => 'VARCHAR',
     );
     return $map;
   }

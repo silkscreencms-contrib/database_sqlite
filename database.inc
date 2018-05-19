@@ -369,6 +369,8 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
       'NOT LIKE' => array('postfix' => " ESCAPE '\\'"),
       'LIKE BINARY' => array('postfix' => " ESCAPE '\\'", 'operator' => 'GLOB'),
       'NOT LIKE BINARY' => array('postfix' => " ESCAPE '\\'", 'operator' => 'NOT GLOB'),
+      'REGEXP BINARY' => array('postfix' => " ESCAPE '\\'", 'operator' => 'REGEXP'),
+      'NOT REGEXP BINARY' => array('postfix' => " ESCAPE '\\'", 'operator' => 'NOT REGEXP'),
     );
     return isset($specials[$operator]) ? $specials[$operator] : NULL;
   }

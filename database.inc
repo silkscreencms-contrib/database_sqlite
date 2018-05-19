@@ -120,6 +120,17 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
     // that does not support the NOT keyword prefix.
     $this->sqliteCreateFunction('glob', array(__CLASS__, 'sqlFunctionLikeBinary'));
 
+    // Set SQLite init_commands if not already defined. Enable the Write-Ahead
+    // Logging (WAL) for SQLite. See https://www.drupal.org/node/2348137 and
+    // https://www.sqlite.org/wal.html.
+    $connection_options += array(
+      'init_commands' => array(),
+    );
+    $connection_options['init_commands'] += array(
+      'wal' => "PRAGMA journal_mode=WAL",
+      'timeout' => "PRAGMA busy_timeout=3000",
+    );
+
     // Execute sqlite init_commands.
     if (isset($connection_options['init_commands'])) {
       $this->exec(implode('; ', $connection_options['init_commands']));

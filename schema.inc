@@ -564,12 +564,8 @@ class DatabaseSchema_sqlite extends DatabaseSchema {
    */
   protected function mapKeyDefinition(array $key_definition, array $mapping) {
     foreach ($key_definition as &$field) {
-      // The key definition can be an array($field, $length).
-      if (is_array($field)) {
-        $field = &$field[0];
-      }
-      if (isset($mapping[$field])) {
-        $field = $mapping[$field];
+      if ($field_new = array_search($field, $mapping)) {
+        $field = $field_new;
       }
     }
     return $key_definition;

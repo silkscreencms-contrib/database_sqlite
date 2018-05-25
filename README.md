@@ -14,6 +14,7 @@ with the other Silkscreen database drivers.
 
 * REGEXP BINARY is not supported by SQLite, so the case-insensitive REGEXP is
   used instead.
+* This driver requires SQLite 3.7 or higher.
 
 License
 -------
@@ -26,4 +27,5 @@ Maintainers
 
 - John Franklin (https://github.com/jlfranklin/)
 
-Originally written for Drupal by the Drupal core team.
+Originally written for Drupal by the Drupal core team, with many patches
+backported.

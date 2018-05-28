@@ -127,8 +127,8 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
       'init_commands' => array(),
     );
     $connection_options['init_commands'] += array(
-      'wal' => "PRAGMA journal_mode=WAL",
-      'timeout' => "PRAGMA busy_timeout=3000",
+      'journal_mode' => "PRAGMA journal_mode=WAL",
+      'busy_timeout' => "PRAGMA busy_timeout=3000",
     );
 
     // Execute sqlite init_commands.

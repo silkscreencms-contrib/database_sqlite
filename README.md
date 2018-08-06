@@ -20,6 +20,22 @@ with the other Silkscreen database drivers.
 * Under load, the database driver may return "Database locked" errors.
 * This driver requires SQLite 3.7 or higher.
 
+Database Connection URL
+-----------------------
+The database URL for the SQLite driver doesn't require a host or username, as
+they don't make any sense for the connection.  The connection URL can point to a
+relative or absolute path.  For relative paths, use:
+
+```php
+    $database = 'sqlite://files/myDatabase.sqlite';
+```
+
+For absolute paths, include a third slash after the colon:
+
+```php
+    $database = 'sqlite:///path/to/myDatabase.sqlite';
+```
+
 Test Suite Issues
 -----------------
 
@@ -42,7 +58,7 @@ for details.
 
 The `ViewsHandlerFilterStringTest` attempts to search for `LENGTH(fieldname) <
 5`.  Somewhere, the integer value gets converted to a string value and SQLite
-effectively searches for `LENGTH(filename) < 0`. See
+effectively searches for `LENGTH(fieldname) < 0`. See
 [Issue #8](https://github.com/silkscreencms-contrib/database_sqlite/issues/8)
 for details.
 

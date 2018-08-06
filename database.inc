@@ -350,6 +350,20 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
     return 'sqlite';
   }
 
+  public static function parseDatabaseUrl($url) {
+    $matches = array();
+    $parsed = preg_match("/^sqlite:\/\/(.*\w)/", $url, $matches);
+    if (!$parsed) {
+      return FALSE;
+    }
+    return array(
+      'scheme' => 'sqlite',
+      'host' => 'localhost',
+      'user' => 'sqlite',
+      'path' => '/' . $matches[1],
+    );
+  }
+
   /**
    * Overrides DatabaseConnection::createDatabase().
    *

@@ -27,22 +27,22 @@ Three tests don't pass the test suite.
 
 * Issue #9: Field API: Field SQL Storage tests (FieldSqlStorageTestCase)
 * Issue #7: File API: File uploading transliteration (FileUploadTransliterationTest)
-* Issue #8: Views Handlers: Filter: String (ViewsHandlerFilterStringTest) 
+* Issue #8: Views Handlers: Filter: String (ViewsHandlerFilterStringTest)
 
 The `FieldSqlStorageTestCase` fails to return an error when setting a column to
 length -1.  This is not likley to affect anything in a production envrionment. See
-[Issue #9](https://github.com/silkscreencms-contrib/database_sqlite/issues/9) 
+[Issue #9](https://github.com/silkscreencms-contrib/database_sqlite/issues/9)
 for details.
 
 The `FileUploadTransliterationTest` requires a `REGEXP BINARY` in the `WHERE`
 clause, which isn't supported by SQLite3. This is needed in Silkscreen core for
-case-sensitive searches of file names in the test. See 
+case-sensitive searches of file names in the test. See
 [Issue #7](https://github.com/silkscreencms-contrib/database_sqlite/issues/7)
 for details.
 
 The `ViewsHandlerFilterStringTest` attempts to search for `LENGTH(fieldname) <
 5`.  Somewhere, the integer value gets converted to a string value and SQLite
-effectively searches for `LENGTH(filename) < 0`. See 
+effectively searches for `LENGTH(filename) < 0`. See
 [Issue #8](https://github.com/silkscreencms-contrib/database_sqlite/issues/8)
 for details.
 
@@ -51,7 +51,7 @@ Database Connection Options
 
 The database driver accepts a long list of options, which can be added to the
 connection string in `DatabaseConnection_sqlite::__construct()`.  See the
-[SQLite documentation](https://www.sqlite.org/pragma.html) for details.
+[SQLite3 documentation](https://www.sqlite.org/pragma.html) for details.
 
 The default settings are:
 

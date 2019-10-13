@@ -648,6 +648,8 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
 
 }
 
+class_alias('DatabaseConnection_sqlite', 'DatabaseConnection_sqlite3');
+
 /**
  * Specific SQLite implementation of DatabaseConnection.
  *
@@ -781,6 +783,8 @@ class DatabaseStatement_sqlite extends DatabaseStatementPrefetch implements Iter
     return $return;
   }
 }
+
+class_alias('DatabaseStatement_sqlite', 'DatabaseStatement_sqlite3');
 
 /**
  * @} End of "addtogroup database".

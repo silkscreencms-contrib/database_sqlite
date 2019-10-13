@@ -1,0 +1,11 @@
+name = SQLite3 Database Driver
+description = Enable the use of SQLite3 databases
+version = 1.10-beta1
+
+database_driver = sqlite3
+
+database_backend[DatabaseConnection_sqlite3] = database.inc
+database_backend[DatabaseTasks_sqlite3] = install.inc
+database_backend[InsertQuery_sqlite3] = query.inc
+database_backend[TruncateQuery_sqlite3] = query.inc
+database_backend[DatabaseSchema_sqlite3] = schema.inc

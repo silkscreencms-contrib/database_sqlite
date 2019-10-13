@@ -53,6 +53,8 @@ class InsertQuery_sqlite extends InsertQuery {
 
 }
 
+class_alias('InsertQuery_sqlite', 'InsertQuery_sqlite3');
+
 /**
  * SQLite specific implementation of DeleteQuery.
  *
@@ -76,6 +78,8 @@ class DeleteQuery_sqlite extends DeleteQuery {
   }
 }
 
+class_alias('DeleteQuery_sqlite', 'DeleteQuery_sqlite3');
+
 /**
  * SQLite specific implementation of TruncateQuery.
  *
@@ -90,6 +94,8 @@ class TruncateQuery_sqlite extends TruncateQuery {
     return $comments . 'DELETE FROM {' . $this->connection->escapeTable($this->table) . '} ';
   }
 }
+
+class_alias('TruncateQuery_sqlite', 'TruncateQuery_sqlite3');
 
 /**
  * @} End of "addtogroup database".

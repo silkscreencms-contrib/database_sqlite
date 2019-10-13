@@ -47,3 +47,4 @@ class DatabaseTasks_sqlite extends DatabaseTasks {
   }
 }
 
+class_alias('DatabaseTasks_sqlite', 'DatabaseTasks_sqlite3');

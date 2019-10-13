@@ -709,3 +709,5 @@ class DatabaseSchema_sqlite extends DatabaseSchema {
     return $tables;
   }
 }
+
+class_alias('DatabaseSchema_sqlite', 'DatabaseSchema_sqlite3');

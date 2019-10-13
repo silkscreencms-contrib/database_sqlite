@@ -20,6 +20,8 @@ class SelectQuery_sqlite extends SelectQuery {
   }
 }
 
+class_alias('SelectQuery_sqlite', 'SelectQuery_sqlite3');
+
 /**
  * @} End of "addtogroup database".
  */

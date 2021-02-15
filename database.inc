@@ -152,9 +152,10 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
           $count = $this->query('SELECT COUNT(*) FROM ' . $prefix . '.sqlite_master WHERE type = :type AND name NOT LIKE :pattern', array(':type' => 'table', ':pattern' => 'sqlite_%'))->fetchField();
 
           // We can prune the database file if it doesn't have any tables.
-          if ($count == 0) {
-            // Detach the database.
-            $this->query('DETACH DATABASE :schema', array(':schema' => $prefix));
+          if ($count == 0 && $this->connectionOptions['database'] != ':memory:') {
+            // Detaching the database fails at this point, but no other queries
+            // are executed after the connection is destructed so we can simply
+            // remove the database file.
             // Destroy the database file.
             unlink($this->connectionOptions['database'] . '-' . $prefix);
           }

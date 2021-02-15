@@ -6,6 +6,13 @@ This driver contains the SQLite database driver for Silkscreen CMS.
 To enable this driver, place it in the `drivers` directory in the root of the
 Silkscreen CMS site or in the sites/[yoursite]/drivers directory.
 
+Compatibility
+-------------
+
+When running with Silkscreen CMS 1.18 or later, the database_sqlite 1.18 or
+later driver must be used.  Silkscreen CMS 1.18.1 introduces new API calls in
+the database connection object that SQLite must override to work correctly.
+
 Limitations
 -----------
 
@@ -39,7 +46,32 @@ For absolute paths, include a third slash after the colon:
 Test Suite Issues
 -----------------
 
-Three tests don't pass the test suite.
+Several tests don't pass the test suite.
+
+ - Select tests (DatabaseSelectTestCase)
+   - testSimpleComment
+   - testVulnerableComment
+ - Field SQL Storage tests (FieldSqlStorageTestCase)
+   - testFieldUpdateFailure
+ - File uploading transliteration (FileUploadTransliterationTest)
+   - testTransliteration
+ - Config settings form (SearchConfigSettingsForm)
+   - testSearchNodeTypes
+ - Taxonomy term functions and forms (TaxonomyTermTestCase)
+   - testTaxonomyGetTermByName
+ - Views taxonomy relationship (TaxonomyViewsHandlerRelationshipNodeTermDataTest)
+   - testViewsHandlerRelationshipNodeTermData
+ - Filter: Multiple conditions (ViewsHandlerFilterMultipleTest)
+   - testMultipleFilters
+ - Filter: String (ViewsHandlerFilterStringTest)
+   - testFilterStringGroupedExposedLonger
+   - testFilterStringGroupedExposedShorter
+   - testFilterStringLonger
+   - testFilterStringShorter
+ - Views UI wizard jump menu functionality (ViewsUIWizardJumpMenuTestCase)
+   - testJumpMenus
+
+Three of them have issues opened already:
 
 * Issue #9: Field API: Field SQL Storage tests (FieldSqlStorageTestCase)
 * Issue #7: File API: File uploading transliteration (FileUploadTransliterationTest)

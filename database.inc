@@ -73,8 +73,8 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
       'pdo' => array(),
     );
     $connection_options['pdo'] += array(
-      // Convert numeric values to strings when fetching.
-      PDO::ATTR_STRINGIFY_FETCHES => TRUE,
+      // Don't convert numeric values to strings when fetching.
+      PDO::ATTR_STRINGIFY_FETCHES => FALSE,
     );
     parent::__construct('sqlite:' . $connection_options['database'], '', '', $connection_options['pdo']);
 

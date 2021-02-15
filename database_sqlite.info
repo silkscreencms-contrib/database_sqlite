@@ -1,6 +1,6 @@
 name = SQLite Database Driver
 description = Enable the use of SQLite databases
-version = 1.10-beta1
+version = 1.18.0
 
 database_driver = sqlite
 type = driver

@@ -3,6 +3,7 @@ description = Enable the use of SQLite databases
 version = 1.10-beta1
 
 database_driver = sqlite
+type = driver
 
 database_backend[DatabaseConnection_sqlite] = database.inc
 database_backend[DatabaseTasks_sqlite] = install.inc

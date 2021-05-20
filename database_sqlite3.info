@@ -1,6 +1,6 @@
 name = SQLite3 Database Driver
 description = Enable the use of SQLite3 databases
-version = 1.18.0
+version = 1.19.0
 
 database_driver = sqlite3
 

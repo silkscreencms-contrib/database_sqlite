@@ -78,6 +78,11 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
     );
     parent::__construct('sqlite:' . $connection_options['database'], '', '', $connection_options['pdo']);
 
+    // Fallback to pointing to ourselves if we're running in Backdrop < 1.19.0.
+    if (empty($this->pdo)) {
+      $this->pdo = $this;
+    }
+
     // Attach one database for each registered prefix.
     $prefixes = $this->prefixes;
     foreach ($prefixes as $table => &$prefix) {
@@ -100,25 +105,26 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
     // Detect support for SAVEPOINT.
     $version = $this->query('SELECT sqlite_version()')->fetchField();
     $this->savepointSupport = (version_compare($version, '3.6.8') >= 0);
+    //$this->savepointSupport = true;
 
     // Create functions needed by SQLite.
-    $this->sqliteCreateFunction('if', array($this, 'sqlFunctionIf'));
-    $this->sqliteCreateFunction('greatest', array($this, 'sqlFunctionGreatest'));
-    $this->sqliteCreateFunction('pow', 'pow', 2);
-    $this->sqliteCreateFunction('length', 'strlen', 1);
-    $this->sqliteCreateFunction('md5', 'md5', 1);
-    $this->sqliteCreateFunction('concat', array($this, 'sqlFunctionConcat'));
-    $this->sqliteCreateFunction('concat_ws', array($this, 'sqlFunctionConcatWs'));
-    $this->sqliteCreateFunction('substring', array($this, 'sqlFunctionSubstring'), 3);
-    $this->sqliteCreateFunction('substring_index', array($this, 'sqlFunctionSubstringIndex'), 3);
-    $this->sqliteCreateFunction('rand', array($this, 'sqlFunctionRand'));
-    $this->sqliteCreateFunction('regexp', array($this, 'sqlFunctionRegexp'));
+    $this->pdo->sqliteCreateFunction('if', array($this, 'sqlFunctionIf'));
+    $this->pdo->sqliteCreateFunction('greatest', array($this, 'sqlFunctionGreatest'));
+    $this->pdo->sqliteCreateFunction('pow', 'pow', 2);
+    $this->pdo->sqliteCreateFunction('length', 'strlen', 1);
+    $this->pdo->sqliteCreateFunction('md5', 'md5', 1);
+    $this->pdo->sqliteCreateFunction('concat', array($this, 'sqlFunctionConcat'));
+    $this->pdo->sqliteCreateFunction('concat_ws', array($this, 'sqlFunctionConcatWs'));
+    $this->pdo->sqliteCreateFunction('substring', array($this, 'sqlFunctionSubstring'), 3);
+    $this->pdo->sqliteCreateFunction('substring_index', array($this, 'sqlFunctionSubstringIndex'), 3);
+    $this->pdo->sqliteCreateFunction('rand', array($this, 'sqlFunctionRand'));
+    $this->pdo->sqliteCreateFunction('regexp', array($this, 'sqlFunctionRegexp'));
 
     // SQLite does not support the LIKE BINARY operator, so we overload the
     // non-standard GLOB operator for case-sensitive matching. Another option
     // would have been to override another non-standard operator, MATCH, but
     // that does not support the NOT keyword prefix.
-    $this->sqliteCreateFunction('glob', array(__CLASS__, 'sqlFunctionLikeBinary'));
+    $this->pdo->sqliteCreateFunction('glob', array(__CLASS__, 'sqlFunctionLikeBinary'));
 
     // Set SQLite init_commands if not already defined. Enable the Write-Ahead
     // Logging (WAL) for SQLite. See https://www.drupal.org/node/2348137 and
@@ -133,7 +139,7 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
 
     // Execute sqlite init_commands.
     if (isset($connection_options['init_commands'])) {
-      $this->exec(implode('; ', $connection_options['init_commands']));
+      $this->pdo->exec(implode('; ', $connection_options['init_commands']));
     }
   }
 
@@ -324,7 +330,9 @@ class DatabaseConnection_sqlite extends DatabaseConnection {
    * expose this function to the world.
    */
   public function PDOPrepare($query, array $options = array()) {
-    return parent::prepare($query, $options);
+    return ($this->pdo === $this) ?
+      parent::prepare($query, $options) :
+      $this->pdo->prepare($query,$options);
   }
 
   public function queryRange($query, $from, $count, array $args = array(), array $options = array()) {
